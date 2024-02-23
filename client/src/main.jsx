@@ -9,6 +9,6 @@ import '@fontsource/roboto/700.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 	<React.StrictMode>
-	<Root></Root>
+		<Root></Root>
 	</React.StrictMode>,
 )
