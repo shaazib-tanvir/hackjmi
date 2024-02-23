@@ -1,0 +1,25 @@
+{
+  "name": "hackjmi-server",
+  "version": "1.0.0",
+  "description": "This is the server for the HackJMI 2024 submission",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shaazib-tanvir/hackjmi.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/shaazib-tanvir/hackjmi/issues"
+  },
+  "homepage": "https://github.com/shaazib-tanvir/hackjmi#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.1.0",
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2"
+  }
+}
