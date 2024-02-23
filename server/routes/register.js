@@ -25,6 +25,7 @@ router.post("/", async (request, response) => {
 	};
 
 	await User.create(user);
+	response.send(user);
 });
 
 module.exports = router;
