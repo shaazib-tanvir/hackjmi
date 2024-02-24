@@ -5,10 +5,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 
-// Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
 // POST route for searching using an API
 app.post('/search', async (req, res) => {
     try {
@@ -16,7 +12,7 @@ app.post('/search', async (req, res) => {
         const { query } = req.body;
 
         // Make a request to the API for searching
-        const response = await axios.get(`https://api.fda.gov/drug/label.json?serach=openfda.generic_name:drug_name_here`);
+        const response = await axios.get(`https://api.fda.gov/drug/label.json?serach=openfda.generic_name: ${query}`);
 
         // Extract the result from the API response
         const result = response.data;
