@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/", async (request, response) => {
 	const drug_name = request.body.name;
-	const query = "https://api.fda.gov/drug/label.json?search=openfda.generic_name:" + drug_name.replace(" ", "*") + "*";
+	const query = "https://api.fda.gov/drug/label.json?search=openfda.brand_name:" + drug_name.replace(" ", "*") + "*" + "&limit=5";
 
 	try {
 		const data = (await axios.get(query)).data;
