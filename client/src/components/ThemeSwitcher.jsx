@@ -10,7 +10,7 @@ function ThemeSwitcher() {
 	}
 
 	return (
-		<Box display={"flex"} justifyContent={"right"} alignItems={"center"} paddingTop={2}>
+		<Box display={"flex"} justifyContent={"right"} alignItems={"center"}>
 			<Typography>Enable Dark Theme</Typography>
 			<Switch onClick={switchTheme} checked={enableDarkTheme} size="medium"></Switch>
 		</Box>

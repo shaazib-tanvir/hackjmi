@@ -62,7 +62,7 @@ function Register() {
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
 						<TextField inputRef={passwordRef} label="Password" variant="outlined" type="password"></TextField>
 						<TextField inputRef={repeatPasswordRef} label="Repeat Password" variant="outlined" type="password"></TextField>
-						<Button onClick={() => register(usernameRef.current.value, passwordRef.current.value, repeatPasswordRef.current.value)} variant="contained" endIcon={<HowToRegOutlinedIcon></HowToRegOutlinedIcon>}>Register</Button>
+						<Button type="submit" onClick={() => register(usernameRef.current.value, passwordRef.current.value, repeatPasswordRef.current.value)} variant="contained" endIcon={<HowToRegOutlinedIcon></HowToRegOutlinedIcon>}>Register</Button>
 						<br></br>
 						<Typography>Already have an account? <Link to="/login">Login</Link> here.</Typography>
 					</Stack>

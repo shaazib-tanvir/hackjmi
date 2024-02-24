@@ -1,4 +1,4 @@
-import {Box, Button, Container, Paper, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Container, FormControl, Paper, Stack, TextField, Typography} from "@mui/material";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenSharp";
 import {Link, useNavigate} from "react-router-dom";
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
@@ -6,11 +6,13 @@ import {useContext, useRef, useState} from "react";
 import StatusBar from "../components/StatusBar";
 import {AuthContext} from "../contexts/AuthContext";
 import ThemeSwitcher from "../components/ThemeSwitcher";
+import {SessionDataContext} from "../contexts/SessionDataContext";
 
 function Login() {
 	const [open, setOpen] = useState(false);
 	const [message, setMessage] = useState("");
 	const [severity, setSeverity] = useState("error");
+	const setSessionData = useContext(SessionDataContext).setSessionData;
 	const setAuthenticated = useContext(AuthContext).setAuthenticated;
 	const usernameRef = useRef(null);
 	const passwordRef = useRef(null);
@@ -39,8 +41,11 @@ function Login() {
 					return;
 				}
 
-				setAuthenticated(true);
-				navigate("/app");
+				fetch("/api/sessiondata").then((response) => response.json()).then((sessionData) => {
+					setSessionData(sessionData);
+					setAuthenticated(true);
+					navigate("/app/medicinetracker");
+				});
 		});
 	}
 
@@ -55,7 +60,7 @@ function Login() {
 						<br></br>
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
 						<TextField inputRef={passwordRef} label="Password" variant="outlined" type="password"></TextField>
-						<Button onClick={() => login(usernameRef.current.value, passwordRef.current.value)} variant="contained" endIcon={<LockOpenOutlinedIcon></LockOpenOutlinedIcon>}>Login</Button>
+						<Button type="submit" onClick={() => login(usernameRef.current.value, passwordRef.current.value)} variant="contained" endIcon={<LockOpenOutlinedIcon></LockOpenOutlinedIcon>}>Login</Button>
 						<br></br>
 						<Typography>Don&apos;t have an account? <Link to="/register">Register</Link> now!</Typography>
 					</Stack>
