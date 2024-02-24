@@ -2,13 +2,15 @@ import {Box, Button, Container, Paper, Stack, TextField, Typography} from "@mui/
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenSharp";
 import {Link, useNavigate} from "react-router-dom";
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import StatusBar from "../components/StatusBar";
+import {AuthContext} from "../contexts/AuthContext";
 
 function Login() {
 	const [open, setOpen] = useState(false);
 	const [message, setMessage] = useState("");
 	const [severity, setSeverity] = useState("error");
+	const setAuthenticated = useContext(AuthContext).setAuthenticated;
 	const usernameRef = useRef(null);
 	const passwordRef = useRef(null);
 	const navigate = useNavigate();
@@ -36,6 +38,7 @@ function Login() {
 					return;
 				}
 
+				setAuthenticated(true);
 				navigate("/app");
 		});
 	}

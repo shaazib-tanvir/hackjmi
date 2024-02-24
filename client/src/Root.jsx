@@ -5,12 +5,15 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import NotFound from "./views/NotFound";
 import App from "./views/App";
+import ProtectedRoute from "./components/ProtectedRoute";
+import {useState} from "react";
+import {AuthContext} from "./contexts/AuthContext";
 
 const router = createBrowserRouter(createRoutesFromElements(
 	<>
 		<Route errorElement={<NotFound></NotFound>} path="/" element={<Login></Login>}></Route>
 		<Route errorElement={<NotFound></NotFound>} path="/login" element={<Login></Login>}></Route>
-		<Route errorElement={<NotFound></NotFound>} path="/app" element={<App></App>}></Route>
+		<Route errorElement={<NotFound></NotFound>} path="/app" element={<ProtectedRoute><App></App></ProtectedRoute>}></Route>
 		<Route errorElement={<NotFound></NotFound>} path="/register" element={<Register></Register>}></Route>
 	</>
 ));
@@ -22,10 +25,15 @@ const darkTheme = createTheme({
 });
 
 function Root() {
+	const [authenticated, setAuthenticated] = useState(false);
+	const value = {authenticated, setAuthenticated};
+
 	return (
 		<ThemeProvider theme={darkTheme}>
 			<CssBaseline></CssBaseline>
-			<RouterProvider router={router}></RouterProvider>
+			<AuthContext.Provider value={value}>
+				<RouterProvider router={router}></RouterProvider>
+			</AuthContext.Provider>
 		</ThemeProvider>
 	);
 }

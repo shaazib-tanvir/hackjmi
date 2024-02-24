@@ -4,6 +4,7 @@ const database = require("./models/");
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
 const bodyParser = require("body-parser");
+const sessionDataRouter = require("./routes/sessiondata");
 const expressSession = require("express-session");
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(expressSession({
 }));
 app.use("/api/register", registerRouter);
 app.use("/api/login/", loginRouter);
+app.use("/api/sessiondata", sessionDataRouter); 
 
 app.use("/assets/", express.static(__dirname + "/../client/dist/assets/"));
 app.get("*", (_, response) => {
