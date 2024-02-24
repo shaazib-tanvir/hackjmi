@@ -3,6 +3,7 @@ import {Box, Button, Container, Paper, Stack, TextField, Typography} from "@mui/
 import {Link} from "react-router-dom";
 import StatusBar from '../components/StatusBar';
 import {useRef, useState} from 'react';
+import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 
 function Register() {
 	const [open, setOpen] = useState(false);
@@ -54,7 +55,7 @@ function Register() {
 			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
 				<Paper sx={{maxWidth: 400, minWidth: 400, padding: 4}}>
 					<Stack spacing={2} direction={"column"} alignItems={"center"} justifyContent={"center"}>
-						<Typography variant="h4">Register</Typography>
+						<Typography variant="h4"><MedicalInformationIcon></MedicalInformationIcon> Register</Typography>
 						<br></br>
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
 						<TextField inputRef={passwordRef} label="Password" variant="outlined" type="password"></TextField>
