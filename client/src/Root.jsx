@@ -8,6 +8,7 @@ import App from "./views/App";
 import ProtectedRoute from "./components/ProtectedRoute";
 import {useState} from "react";
 import {AuthContext} from "./contexts/AuthContext";
+import { ThemeContext } from "./contexts/ThemeContext";
 
 const router = createBrowserRouter(createRoutesFromElements(
 	<>
@@ -24,16 +25,26 @@ const darkTheme = createTheme({
 	},
 });
 
+const lightTheme = createTheme({
+	palette: {
+		mode: "light"
+	}
+});
+
 function Root() {
 	const [authenticated, setAuthenticated] = useState(false);
-	const value = {authenticated, setAuthenticated};
+	const [enableDarkTheme, setEnableDarkTheme] = useState(true);
+	const authenticatedValue = {authenticated, setAuthenticated};
+	const themeValue = {enableDarkTheme, setEnableDarkTheme};
 
 	return (
-		<ThemeProvider theme={darkTheme}>
+		<ThemeProvider theme={enableDarkTheme ? darkTheme : lightTheme}>
 			<CssBaseline></CssBaseline>
-			<AuthContext.Provider value={value}>
-				<RouterProvider router={router}></RouterProvider>
-			</AuthContext.Provider>
+			<ThemeContext.Provider value={themeValue}>
+				<AuthContext.Provider value={authenticatedValue}>
+					<RouterProvider router={router}></RouterProvider>
+				</AuthContext.Provider>
+			</ThemeContext.Provider>
 		</ThemeProvider>
 	);
 }

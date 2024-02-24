@@ -5,6 +5,7 @@ import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import {useContext, useRef, useState} from "react";
 import StatusBar from "../components/StatusBar";
 import {AuthContext} from "../contexts/AuthContext";
+import ThemeSwitcher from "../components/ThemeSwitcher";
 
 function Login() {
 	const [open, setOpen] = useState(false);
@@ -22,7 +23,7 @@ function Login() {
 			setOpen(true);
 		}
 
-		fetch("/api/login", {
+	fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({
 				username: username,
@@ -45,6 +46,7 @@ function Login() {
 
 	return (
 		<Container sx={{height: "100%"}}>
+			<ThemeSwitcher></ThemeSwitcher>
 			<StatusBar severity={severity} message={message} open={open} setOpen={setOpen}></StatusBar>
 			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
 				<Paper sx={{maxWidth: 400, minWidth: 400, padding: 4}}>
@@ -53,7 +55,7 @@ function Login() {
 						<br></br>
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
 						<TextField inputRef={passwordRef} label="Password" variant="outlined" type="password"></TextField>
-					<Button onClick={() => login(usernameRef.current.value, passwordRef.current.value)} variant="contained" endIcon={<LockOpenOutlinedIcon></LockOpenOutlinedIcon>}>Login</Button>
+						<Button onClick={() => login(usernameRef.current.value, passwordRef.current.value)} variant="contained" endIcon={<LockOpenOutlinedIcon></LockOpenOutlinedIcon>}>Login</Button>
 						<br></br>
 						<Typography>Don&apos;t have an account? <Link to="/register">Register</Link> now!</Typography>
 					</Stack>

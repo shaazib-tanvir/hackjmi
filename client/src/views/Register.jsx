@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import StatusBar from '../components/StatusBar';
 import {useRef, useState} from 'react';
 import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 function Register() {
 	const [open, setOpen] = useState(false);
@@ -51,6 +52,7 @@ function Register() {
 
 	return (
 		<Container sx={{height: "100%"}}>
+			<ThemeSwitcher></ThemeSwitcher>
 			<StatusBar severity={severity} message={message} open={open} setOpen={setOpen}></StatusBar>
 			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
 				<Paper sx={{maxWidth: 400, minWidth: 400, padding: 4}}>
