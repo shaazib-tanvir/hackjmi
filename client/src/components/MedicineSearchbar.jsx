@@ -30,7 +30,7 @@ export default function MedicineSearchbar({setDrugData, drugNameRef, setDrugInfo
 			return;
 		}
 
-	fetch("/api/drug", {
+	fetch("/api/drug/name", {
 			method: "POST",
 			headers: {"Content-Type": "application/json"},
 			body: JSON.stringify({name: value})

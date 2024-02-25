@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define("Drug", {
 		allowNull: false
 	},
 	dose_times: {
-		type: DataTypes.STRING,
+		type: DataTypes.JSON,
 		allowNull: false
 	}
 });

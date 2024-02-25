@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const sessionDataRouter = require("./routes/sessiondata");
 const drugRouter = require("./routes/drug");
 const createDrugRouter = require("./routes/createdrug");
+const getDrugsRouter = require("./routes/getdrugs");
 const expressSession = require("express-session");
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/register", registerRouter);
 app.use("/api/login/", loginRouter);
 app.use("/api/sessiondata", sessionDataRouter); 
 app.use("/api/drug", drugRouter);
+app.use("/api/getdrugs", getDrugsRouter);
 app.use("/api/createdrug", createDrugRouter);
 
 app.use("/assets/", express.static(__dirname + "/../client/dist/assets/"));

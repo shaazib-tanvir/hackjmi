@@ -2,25 +2,32 @@ import {Button, Card, CardActions, CardContent, Divider, Stack, TextField, Typog
 import {DatePicker, LocalizationProvider, TimePicker} from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import "dayjs/locale/en-in";
 import {SessionDataContext} from "../contexts/SessionDataContext";
 import PropTypes from "prop-types";
 import StatusBar from "./StatusBar";
 
-export default function DrugInfo({drugName, drugData}) {
-	const [dosePerDay, setDosePerDay] = useState(1);	
-	const [duration, setDuration] = useState({month: "0", week: "0", day: "0"});
-	const [startDate, setStartDate] = useState(dayjs());
+export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration = { month: "0", week: "0", day: "0" }, _startDate = null, _times = null, loaded = false}) {
+	const [dosePerDay, setDosePerDay] = useState(_dosePerDay);	
+	const [duration, setDuration] = useState(_duration);
+	const [startDate, setStartDate] = useState(_startDate);
 	const [times, setTimes] = useState(Array(Number(dosePerDay)).fill(null));
 	const [message, setMessage] = useState("");
 	const [severity, setSeverity] = useState("error");
 	const [open, setOpen] = useState(false);
+
 	const sessionData = useContext(SessionDataContext).sessionData;
 	const timePickers = [...Array(Number(dosePerDay)).keys()].map((index) => {
 		return <TimePicker value={times[index]} onChange={(value) => setTimes(times.map((previous_value, j) => (index === j ? value : previous_value)))} key={index} label="Time"></TimePicker>;
 	});
+
+	useEffect(() => {
+		if (loaded) {
+			setTimes(_times);
+		}
+	}, [_times, loaded]);
 
 	function saveDrug() {
 		const username = sessionData.username;
@@ -54,7 +61,7 @@ export default function DrugInfo({drugName, drugData}) {
 			duration_month: Number(duration.month),
 			duration_week: Number(duration.week),
 			duration_day: Number(duration.day),
-			dose_times: JSON.stringify(times)
+			dose_times: times
 		};
 
 		fetch("/api/createdrug", {
@@ -73,6 +80,9 @@ export default function DrugInfo({drugName, drugData}) {
 				setMessage("Successfully saved medicine!");
 				setOpen(true);
 		});
+	}
+
+	function updateDrug() {
 	}
 
 	function progress() {
@@ -146,7 +156,7 @@ export default function DrugInfo({drugName, drugData}) {
 					<Divider sx={{marginTop: 2}}></Divider>
 				</CardContent>
 				<CardActions>
-					<Button onClick={() => saveDrug()} size="small">Save</Button>
+					{loaded ? <Button onClick={() => updateDrug()} size="small">Update</Button> : <Button onClick={() => saveDrug()} size="small">Save</Button>}
 				</CardActions>
 			</Card>
 		</>
@@ -155,5 +165,10 @@ export default function DrugInfo({drugName, drugData}) {
 
 DrugInfo.propTypes = {
 	drugName: PropTypes.string.isRequired,
-	drugData: PropTypes.object
+	drugData: PropTypes.object,
+	_dosePerDay: PropTypes.number,
+	_duration: PropTypes.object,
+	_startDate: PropTypes.any,
+	_times: PropTypes.any,
+	loaded: PropTypes.bool
 }
