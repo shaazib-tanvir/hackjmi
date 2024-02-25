@@ -80,7 +80,14 @@ function MedicineTracker() {
 			return;
 		} 
 
-		setDrugInfoList(drugInfoList.concat([<DrugInfo key={drugNameRef.current.value} drugName={drugNameRef.current.value} drugData={drugData}></DrugInfo>]));
+		const drugName = drugNameRef.current.value;
+		if (drugInfoList.find((drugInfo) => drugInfo.props.drugName === drugName) != undefined) {
+			setMessage("This medicine already exists!");
+			setOpen(true);
+			return;
+		}
+
+		setDrugInfoList(drugInfoList.concat([<DrugInfo key={drugName} drugName={drugName} drugData={drugData}></DrugInfo>]));
 		setPage(drugInfoList.length + 1);
 	}
 
