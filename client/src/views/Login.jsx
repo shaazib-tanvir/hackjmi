@@ -1,12 +1,12 @@
-import {Box, Button, Container, FormControl, Paper, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Container, Paper, Stack, TextField, Typography} from "@mui/material";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenSharp";
 import {Link, useNavigate} from "react-router-dom";
-import MedicalInformationIcon from '@mui/icons-material/MedicalInformation';
 import {useContext, useRef, useState} from "react";
 import StatusBar from "../components/StatusBar";
 import {AuthContext} from "../contexts/AuthContext";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import {SessionDataContext} from "../contexts/SessionDataContext";
+import Logo from "../components/Logo";
 
 function Login() {
 	const [open, setOpen] = useState(false);
@@ -25,7 +25,7 @@ function Login() {
 			setOpen(true);
 		}
 
-	fetch("/api/login", {
+		fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({
 				username: username,
@@ -56,7 +56,12 @@ function Login() {
 			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} alignItems={"center"} justifyContent={"center"}>
 				<Paper sx={{maxWidth: 400, minWidth: 400, padding: 4}}>
 					<Stack spacing={2} direction={"column"} alignItems={"center"} justifyContent={"center"}>
-						<Typography variant="h4"><MedicalInformationIcon></MedicalInformationIcon> Login</Typography>
+						<Stack alignItems={"center"} spacing={1} direction={"row"}>
+							<Logo width={32} height={32}></Logo>
+							<Typography variant="h4">
+								Login
+							</Typography>
+						</Stack>
 						<br></br>
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
 						<TextField inputRef={passwordRef} label="Password" variant="outlined" type="password"></TextField>
