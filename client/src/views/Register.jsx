@@ -22,7 +22,7 @@ function Register() {
 			return;
 		}
 
-		fetch("/api/register", {
+	fetch("/api/register", {
 			method: "POST",
 			body: JSON.stringify({
 				username: username,
@@ -31,22 +31,22 @@ function Register() {
 			headers: {
 				"Content-Type": "application/json"
 			}
-		}).then((response) => {
-			if (response.status == 401) {
+			}).then((response) => {
+				if (response.status == 401) {
 					setSeverity("error");
 					setMessage("Username already exists!");
 					setOpen(true);
 					return null;
-			} else if (response.status != 200) {
+				} else if (response.status != 200) {
 					setSeverity("error");
 					setMessage("Error: " + response.status);
 					setOpen(true);
 					return null;
-			}
+				}
 
-			setSeverity("success");
-			setMessage("Successfully registered!");
-			setOpen(true);
+				setSeverity("success");
+				setMessage("Successfully registered!");
+				setOpen(true);
 		});
 	}
 
@@ -58,10 +58,10 @@ function Register() {
 				<Paper sx={{maxWidth: 400, minWidth: 400, padding: 4}}>
 					<Stack spacing={2} direction={"column"} alignItems={"center"} justifyContent={"center"}>
 						<Stack alignItems={"center"} spacing={1} direction={"row"}>
-						<Logo width={32} height={32}></Logo>
-						<Typography variant="h4">
-							Register
-						</Typography>
+							<Logo width={32} height={32}></Logo>
+							<Typography variant="h4">
+								Register
+							</Typography>
 						</Stack>
 						<br></br>
 						<TextField inputRef={usernameRef} label="Username" variant="outlined"></TextField>
@@ -73,6 +73,10 @@ function Register() {
 					</Stack>
 				</Paper>
 			</Box>
+			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} justifyContent={"end"} alignItems={"center"}>
+				<a href="https://www.flaticon.com/free-icons/patient" title="patient icons">Icon created by RaftelDesign - Flaticon</a>
+			</Box>
+
 		</Container>
 	);
 }

@@ -71,6 +71,9 @@ function Login() {
 					</Stack>
 				</Paper>
 			</Box>
+			<Box display={"flex"} sx={{height: "100%"}} flexDirection={"column"} justifyContent={"end"} alignItems={"center"}>
+				<a href="https://www.flaticon.com/free-icons/patient" title="patient icons">Icon created by RaftelDesign - Flaticon</a>
+			</Box>
 		</Container>
 	);
 }
