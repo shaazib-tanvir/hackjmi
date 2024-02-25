@@ -11,7 +11,7 @@ import {AuthContext} from "./contexts/AuthContext";
 import { ThemeContext } from "./contexts/ThemeContext";
 import {SessionDataContext} from "./contexts/SessionDataContext";
 import MedicineTracker from "./views/MedicineTracker";
-import Sandbox from "./views/Sandbox";
+import { Notifications } from 'react-push-notification';
 
 const router = createBrowserRouter(createRoutesFromElements(
 	<>
@@ -20,7 +20,6 @@ const router = createBrowserRouter(createRoutesFromElements(
 		<Route errorElement={<NotFound></NotFound>} path="/app" element={<ProtectedRoute><App></App></ProtectedRoute>}>
 			<Route errorElement={<NotFound></NotFound>} path="/app/medicinetracker" element={<MedicineTracker></MedicineTracker>}></Route>
 		</Route>
-		<Route errorElement={<NotFound></NotFound>} path="/sandbox" element={<Sandbox></Sandbox>}></Route>
 		<Route errorElement={<NotFound></NotFound>} path="/register" element={<Register></Register>}></Route>
 	</>
 ));
@@ -46,6 +45,8 @@ function Root() {
 	const themeValue = {enableDarkTheme, setEnableDarkTheme};
 
 	return (
+		<>
+		<Notifications></Notifications>
 		<ThemeProvider theme={enableDarkTheme ? darkTheme : lightTheme}>
 			<CssBaseline></CssBaseline>
 			<ThemeContext.Provider value={themeValue}>
@@ -56,6 +57,7 @@ function Root() {
 				</AuthContext.Provider>
 			</ThemeContext.Provider>
 		</ThemeProvider>
+		</>
 	);
 }
 
