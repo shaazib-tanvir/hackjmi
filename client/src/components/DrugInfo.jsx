@@ -49,7 +49,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					}
 				}
 			});
-			}, 60000);
+		}, 60000);
 
 		return () => clearInterval(interval);
 		}, [times, drugName]);
@@ -89,7 +89,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 			if (drugs.find((drug) => drug.drug_name === drugName) !== undefined) {
 				setSeverity("error");
 				setMessage("This medicine is already saved!");
-				setOpen(true);
+			setOpen(true);
 				return;
 			}
 		}
@@ -123,7 +123,57 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 		setOpen(true);
 	}
 
-	function updateDrug() {
+	async function updateDrug() {
+		const username = sessionData.username;
+		const id = (drugData !== null && drugData !== undefined) ? drugData.id : null;
+		if (startDate === null || startDate === undefined || !startDate.isValid()) {
+			setSeverity("error");
+			setMessage("Enter a valid start date!");
+			setOpen(true);
+			return;
+		}
+
+		if (duration.day == "0" && duration.week == "0" && duration.month == "0") {
+			setSeverity("error");
+			setMessage("Enter the duration of the medicine!");
+			setOpen(true);
+			return;
+		}
+
+		if (times.length === 0 || times.includes(null)) {
+			setSeverity("error");
+			setMessage("Enter the time of the dose!");
+			setOpen(true);
+			return;
+		}
+
+		const data = {
+			username: username,
+			drug_name: drugName,
+			drug_id: id,
+			start_date: startDate.toDate(),
+			duration_month: Number(duration.month),
+			duration_week: Number(duration.week),
+			duration_day: Number(duration.day),
+			dose_times: times
+		};
+
+		const response = await fetch("/api/updatedrug", {
+			method: "POST",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify(data)
+		});
+
+		if (response.status !== 200) {
+			setSeverity("error");
+			setMessage("Something went wrong!");
+			setOpen(true);
+			return;
+		}
+
+		setSeverity("success");
+		setMessage("Updated the medicine!");
+		setOpen(true);
 	}
 
 	function progress() {
@@ -151,13 +201,13 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 
 		switch(parameter) {
 			case "month":
-			setDuration({month: value, week: duration.week, day: duration.day});
+				setDuration({month: value, week: duration.week, day: duration.day});
 			break;
 			case "week":
-			setDuration({month: duration.month, week: value, day: duration.day});
+				setDuration({month: duration.month, week: value, day: duration.day});
 			break;
 			case "day":
-			setDuration({month: duration.month, week: duration.week, day: value});
+				setDuration({month: duration.month, week: duration.week, day: value});
 			break;
 		}
 	}
@@ -166,7 +216,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 		<>
 			<StatusBar message={message} severity={severity} open={open} setOpen={setOpen}></StatusBar>
 			<Card sx={{width: "50%"}}>
-			<CardContent>
+				<CardContent>
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 						Name
 					</Typography>
@@ -181,7 +231,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					</Typography>
 					<Divider sx={{marginTop: 2, marginBottom: 2}}></Divider>
 					<LocalizationProvider adapterLocale="en-in" dateAdapter={AdapterDayjs}>
-					<Stack spacing={1}>
+						<Stack spacing={1}>
 							<DatePicker onChange={(value) => setStartDate(value)} value={startDate} label="Start Date"></DatePicker>
 							<TextField label="Dose Per Day" type="number" value={dosePerDay} onChange={(event) => onDoseChange(event.target.value)}></TextField>
 							{timePickers}
@@ -196,8 +246,8 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					</LocalizationProvider>
 					<Divider sx={{marginTop: 2}}></Divider>
 				</CardContent>
-			<CardActions>
-					{loaded ? <Button onClick={() => updateDrug()} size="small">Update</Button> : <Button onClick={saveDrug} size="small">Save</Button>}
+				<CardActions>
+					{loaded ? <Button onClick={updateDrug} size="small">Update</Button> : <Button onClick={saveDrug} size="small">Save</Button>}
 				</CardActions>
 			</Card>
 		</>

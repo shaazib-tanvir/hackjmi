@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const sessionDataRouter = require("./routes/sessiondata");
 const drugRouter = require("./routes/drug");
 const createDrugRouter = require("./routes/createdrug");
+const updateDrugRouter = require("./routes/updatedrug");
 const getDrugsRouter = require("./routes/getdrugs");
 const expressSession = require("express-session");
 
@@ -31,6 +32,7 @@ app.use("/api/sessiondata", sessionDataRouter);
 app.use("/api/drug", drugRouter);
 app.use("/api/getdrugs", getDrugsRouter);
 app.use("/api/createdrug", createDrugRouter);
+app.use("/api/updatedrug", updateDrugRouter);
 
 app.use("/assets/", express.static(__dirname + "/../client/dist/assets/"));
 app.use("/icon.png", (_, response) => {
