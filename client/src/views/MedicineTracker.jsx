@@ -81,7 +81,7 @@ function MedicineTracker() {
 		} 
 
 		setDrugInfoList(drugInfoList.concat([<DrugInfo key={drugNameRef.current.value} drugName={drugNameRef.current.value} drugData={drugData}></DrugInfo>]));
-		setPage(page + 1);
+		setPage(drugInfoList.length + 1);
 	}
 
 	return (
