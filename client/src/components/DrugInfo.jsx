@@ -49,12 +49,12 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					}
 				}
 			});
-		}, 60000);
+			}, 60000);
 
 		return () => clearInterval(interval);
 		}, [times, drugName]);
 
-	function saveDrug() {
+	async function saveDrug() {
 		const username = sessionData.username;
 		const id = (drugData !== null && drugData !== undefined) ? drugData.id : null;
 		if (startDate === null || startDate === undefined || !startDate.isValid()) {
@@ -78,6 +78,22 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 			return;
 		}
 
+		const getDrugsResponse = await fetch("/api/getdrugs", {
+			method: "POST",
+			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify({username: username})
+		});
+
+		if (getDrugsResponse.status === 200) {
+			const drugs = await getDrugsResponse.json();
+			if (drugs.find((drug) => drug.drug_name === drugName) !== undefined) {
+				setSeverity("error");
+				setMessage("This medicine is already saved!");
+				setOpen(true);
+				return;
+			}
+		}
+
 		const data = {
 			username: username,
 			drug_name: drugName,
@@ -89,22 +105,22 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 			dose_times: times
 		};
 
-		fetch("/api/createdrug", {
+		const createDrugResponse = await fetch("/api/createdrug", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(data)
-			}).then((response) => {
-				if (response.status !== 200) {
-					setSeverity("error");
-					setMessage("Something went wrong!");
-					setOpen(true);
-					return;
-				}
-
-				setSeverity("success");
-				setMessage("Successfully saved medicine!");
-				setOpen(true);
 		});
+
+		if (createDrugResponse.status !== 200) {
+			setSeverity("error");
+			setMessage("Something went wrong!");
+			setOpen(true);
+			return;
+		}
+
+		setSeverity("success");
+		setMessage("Successfully saved medicine!");
+		setOpen(true);
 	}
 
 	function updateDrug() {
@@ -135,13 +151,13 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 
 		switch(parameter) {
 			case "month":
-				setDuration({month: value, week: duration.week, day: duration.day});
+			setDuration({month: value, week: duration.week, day: duration.day});
 			break;
 			case "week":
-				setDuration({month: duration.month, week: value, day: duration.day});
+			setDuration({month: duration.month, week: value, day: duration.day});
 			break;
 			case "day":
-				setDuration({month: duration.month, week: duration.week, day: value});
+			setDuration({month: duration.month, week: duration.week, day: value});
 			break;
 		}
 	}
@@ -150,7 +166,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 		<>
 			<StatusBar message={message} severity={severity} open={open} setOpen={setOpen}></StatusBar>
 			<Card sx={{width: "50%"}}>
-				<CardContent>
+			<CardContent>
 					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
 						Name
 					</Typography>
@@ -165,7 +181,7 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					</Typography>
 					<Divider sx={{marginTop: 2, marginBottom: 2}}></Divider>
 					<LocalizationProvider adapterLocale="en-in" dateAdapter={AdapterDayjs}>
-						<Stack spacing={1}>
+					<Stack spacing={1}>
 							<DatePicker onChange={(value) => setStartDate(value)} value={startDate} label="Start Date"></DatePicker>
 							<TextField label="Dose Per Day" type="number" value={dosePerDay} onChange={(event) => onDoseChange(event.target.value)}></TextField>
 							{timePickers}
@@ -180,8 +196,8 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 					</LocalizationProvider>
 					<Divider sx={{marginTop: 2}}></Divider>
 				</CardContent>
-				<CardActions>
-					{loaded ? <Button onClick={() => updateDrug()} size="small">Update</Button> : <Button onClick={() => saveDrug()} size="small">Save</Button>}
+			<CardActions>
+					{loaded ? <Button onClick={() => updateDrug()} size="small">Update</Button> : <Button onClick={saveDrug} size="small">Save</Button>}
 				</CardActions>
 			</Card>
 		</>
