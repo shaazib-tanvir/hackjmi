@@ -2,16 +2,78 @@ import {Button, Card, CardActions, CardContent, Divider, Stack, TextField, Typog
 import {DatePicker, LocalizationProvider, TimePicker} from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from "dayjs";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
+import "dayjs/locale/en-in";
+import {SessionDataContext} from "../contexts/SessionDataContext";
+import PropTypes from "prop-types";
+import StatusBar from "./StatusBar";
 
-export default function DrugInfo() {
+export default function DrugInfo({drugName, drugData}) {
 	const [dosePerDay, setDosePerDay] = useState(1);	
 	const [duration, setDuration] = useState({month: "0", week: "0", day: "0"});
 	const [startDate, setStartDate] = useState(dayjs());
+	const [times, setTimes] = useState(Array(Number(dosePerDay)).fill(null));
+	const [message, setMessage] = useState("");
+	const [severity, setSeverity] = useState("error");
+	const [open, setOpen] = useState(false);
+	const sessionData = useContext(SessionDataContext).sessionData;
 	const timePickers = [...Array(Number(dosePerDay)).keys()].map((index) => {
-		return <TimePicker key={index} label="Time"></TimePicker>;
+		return <TimePicker value={times[index]} onChange={(value) => setTimes(times.map((previous_value, j) => (index === j ? value : previous_value)))} key={index} label="Time"></TimePicker>;
 	});
+
+	function saveDrug() {
+		const username = sessionData.username;
+		const id = (drugData !== null && drugData !== undefined) ? drugData.id : null;
+		if (startDate === null || startDate === undefined || !startDate.isValid()) {
+			setSeverity("error");
+			setMessage("Enter a valid start date!");
+			setOpen(true);
+			return;
+		}
+
+		if (duration.day == "0" && duration.week == "0" && duration.month == "0") {
+			setSeverity("error");
+			setMessage("Enter the duration of the medicine!");
+			setOpen(true);
+			return;
+		}
+
+		if (times.length === 0 || times.includes(null)) {
+			setSeverity("error");
+			setMessage("Enter the time of the dose!");
+			setOpen(true);
+			return;
+		}
+
+		const data = {
+			username: username,
+			drug_name: drugName,
+			drug_id: id,
+			start_date: startDate.toDate(),
+			duration_month: Number(duration.month),
+			duration_week: Number(duration.week),
+			duration_day: Number(duration.day),
+			dose_times: JSON.stringify(times)
+		};
+
+		fetch("/api/createdrug", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(data)
+			}).then((response) => {
+				if (response.status !== 200) {
+					setSeverity("error");
+					setMessage("Something went wrong!");
+					setOpen(true);
+					return;
+				}
+
+				setSeverity("success");
+				setMessage("Successfully saved medicine!");
+				setOpen(true);
+		});
+	}
 
 	function progress() {
 		const days = Number(duration.month) * 30 + Number(duration.week) * 7 + Number(duration.day);
@@ -28,6 +90,7 @@ export default function DrugInfo() {
 		}
 
 		setDosePerDay(value);
+		setTimes(times.concat([null]));
 	}
 
 	function onChangeDuration(value, parameter) {
@@ -37,52 +100,60 @@ export default function DrugInfo() {
 
 		switch(parameter) {
 			case "month":
-			setDuration({month: value, week: duration.week, day: duration.day});
+				setDuration({month: value, week: duration.week, day: duration.day});
 			break;
 			case "week":
-			setDuration({month: duration.month, week: value, day: duration.day});
+				setDuration({month: duration.month, week: value, day: duration.day});
 			break;
 			case "day":
-			setDuration({month: duration.month, week: duration.week, day: value});
+				setDuration({month: duration.month, week: duration.week, day: value});
 			break;
 		}
 	}
 
 	return (
-		<Card sx={{width: "25%"}}>
-			<CardContent>
-				<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-					Name
-				</Typography>
-				<Typography variant="h5" component="div">
-					Aspirin
-				</Typography>
-				<Typography sx={{ mb: 1.5 }} color="text.secondary">
-					Pain reliever
-				</Typography>
-				<Typography variant="body3">
-					Uses for the temporary relief of minor aches and pains or as recommended by your doctor. Because of its delayed action, this product will not provide fast relief of headaches or other symptoms needing immediate relief. ask your doctor about other uses for safety coated 81 mg aspirin
-				</Typography>
-				<Divider sx={{marginTop: 2, marginBottom: 2}}></Divider>
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<Stack spacing={1}>
-						<DatePicker onChange={(value) => setStartDate(value)} value={startDate} label="Start Date"></DatePicker>
-						<TextField label="Dose Per Day" type="number" value={dosePerDay} onChange={(event) => onDoseChange(event.target.value)}></TextField>
-						{timePickers}
-						<Typography color={"text.secondary"} sx={{fontSize: 14}}>Duration</Typography>
-						<Stack direction={"row"} spacing={0.5}>
-							<TextField onChange={(event) => onChangeDuration(event.target.value, "month")} value={duration.month} label="Month" type="number"></TextField>
-							<TextField onChange={(event) => onChangeDuration(event.target.value, "week")} value={duration.week} label="Week" type="number"></TextField>
-							<TextField onChange={(event) => onChangeDuration(event.target.value, "day")} value={duration.day} label="Day" type="number"></TextField>
+		<>
+			<StatusBar message={message} severity={severity} open={open} setOpen={setOpen}></StatusBar>
+			<Card sx={{width: "50%"}}>
+				<CardContent>
+					<Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+						Name
+					</Typography>
+					<Typography variant="h5" component="div">
+						{drugName}
+					</Typography>
+					<Typography sx={{ mb: 1.5 }} color="text.secondary">
+						{drugData !== null && drugData !== undefined && drugData.purpose !== undefined ? drugData.purpose : null}
+					</Typography>
+					<Typography variant="body3">
+						{drugData !== null && drugData !== undefined && drugData.indications_and_usage !== undefined ? drugData.indications_and_usage : null}
+					</Typography>
+					<Divider sx={{marginTop: 2, marginBottom: 2}}></Divider>
+					<LocalizationProvider adapterLocale="en-in" dateAdapter={AdapterDayjs}>
+						<Stack spacing={1}>
+							<DatePicker onChange={(value) => setStartDate(value)} value={startDate} label="Start Date"></DatePicker>
+							<TextField label="Dose Per Day" type="number" value={dosePerDay} onChange={(event) => onDoseChange(event.target.value)}></TextField>
+							{timePickers}
+							<Typography color={"text.secondary"} sx={{fontSize: 14}}>Duration</Typography>
+							<Stack direction={"row"} spacing={0.5}>
+								<TextField onChange={(event) => onChangeDuration(event.target.value, "month")} value={duration.month} label="Month" type="number"></TextField>
+								<TextField onChange={(event) => onChangeDuration(event.target.value, "week")} value={duration.week} label="Week" type="number"></TextField>
+								<TextField onChange={(event) => onChangeDuration(event.target.value, "day")} value={duration.day} label="Day" type="number"></TextField>
+							</Stack>
+							<LinearProgressWithLabel color="success" value={progress()}></LinearProgressWithLabel>
 						</Stack>
-						<LinearProgressWithLabel color="success" value={progress()}></LinearProgressWithLabel>
-					</Stack>
-				</LocalizationProvider>
-				<Divider sx={{marginTop: 2}}></Divider>
-			</CardContent>
-			<CardActions>
-				<Button size="small">Save</Button>
-			</CardActions>
-		</Card>
+					</LocalizationProvider>
+					<Divider sx={{marginTop: 2}}></Divider>
+				</CardContent>
+				<CardActions>
+					<Button onClick={() => saveDrug()} size="small">Save</Button>
+				</CardActions>
+			</Card>
+		</>
 	);
+}
+
+DrugInfo.propTypes = {
+	drugName: PropTypes.string.isRequired,
+	drugData: PropTypes.object
 }

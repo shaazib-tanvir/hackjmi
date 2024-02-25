@@ -1,6 +1,7 @@
 import {Autocomplete, IconButton, Stack, TextField, Tooltip} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import {useState} from "react";
+import PropTypes from "prop-types";
 
 function toTitleCase(str) {
 	return str.replace(
@@ -11,7 +12,7 @@ function toTitleCase(str) {
 	);
 }
 
-export default function MedicineSearchbar() {
+export default function MedicineSearchbar({setDrugData, drugNameRef, setDrugInfo}) {
 	const [options, setOptions] = useState([]);
 	const [results, setResults] = useState([]);
 
@@ -20,6 +21,8 @@ export default function MedicineSearchbar() {
 			onSelect(value);
 			return;
 		}
+
+		setDrugData(null);
 
 		if (value === "") {
 			setOptions([]);
@@ -50,7 +53,7 @@ export default function MedicineSearchbar() {
 
 	function onSelect(value) {
 		const result = results.find((result) => result.openfda.brand_name[0].toLowerCase() === value.toLowerCase());
-		console.log(result);
+		setDrugData(result);
 	}
 
 	return (
@@ -60,13 +63,19 @@ export default function MedicineSearchbar() {
 				sx={{width: 350, float: "left"}}
 				onInputChange={(_, value, reason) => onInputChange(value, reason)}
 				options={options}
-				renderInput={(params) => <TextField {...params} label="Enter the medicine you want to add"/>}
+				renderInput={(params) => <TextField inputRef={drugNameRef} {...params} label="Enter the medicine you want to add"/>}
 			/>
 			<Tooltip title="Add">
-				<IconButton sx={{margin: "auto"}}>
+				<IconButton onClick={setDrugInfo} sx={{margin: "auto"}}>
 				<AddIcon></AddIcon>
 				</IconButton>
 			</Tooltip>
 		</Stack>
 	);
+}
+
+MedicineSearchbar.propTypes = {
+	setDrugData: PropTypes.func.isRequired,
+	drugNameRef: PropTypes.any.isRequired,
+	setDrugInfo: PropTypes.func.isRequired
 }
