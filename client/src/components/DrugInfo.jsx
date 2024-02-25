@@ -36,10 +36,11 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 				if (time != null) {
 					const date = dayjs(time);
 					const now = dayjs();
-					const updatedTime = dayjs().hour(date.hour()).minute(date.minute()).second(date.second());
+					const updatedTime = now.hour(date.hour()).minute(date.minute()).second(date.second());
 
 					const minutes = now.diff(updatedTime, "minute", true);
 					if (-1 < minutes && minutes < 0) {
+
 						addNotification({
 							title: "Reminder to take medicine",
 							message: `It is time to take ${drugName}.`,
