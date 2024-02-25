@@ -34,9 +34,8 @@ export default function DrugInfo({drugName, drugData, _dosePerDay = 1, _duration
 		const interval = setInterval(() => {
 			times.map((time) => {
 				if (time != null) {
-					const date = dayjs(time);
 					const now = dayjs();
-					const updatedTime = now.hour(date.hour()).minute(date.minute()).second(date.second());
+					const updatedTime = now.hour(time.hour()).minute(time.minute()).second(time.second());
 
 					const minutes = now.diff(updatedTime, "minute", true);
 					if (-1 < minutes && minutes < 0) {

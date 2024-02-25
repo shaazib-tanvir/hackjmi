@@ -61,7 +61,7 @@ function MedicineTracker() {
 					day: drug.duration_day
 				}
 				const startDate = dayjs(drug.start_date);
-				const times = drug.dose_times;
+				const times = drug.dose_times.map((time) => dayjs(time));
 				const drugData = drugDatas[index] != null ? drugDatas[index].results[0] : null;
 
 				return <DrugInfo key={drugName} drugName={drugName} drugData={drugData} loaded={true} _dosePerDay={times.length} _duration={duration} _startDate={startDate} _times={times}></DrugInfo>;
